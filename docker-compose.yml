@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  db-mysql-test:
+    image: mysql:5.7.24
+    volumes:
+      - db_data5:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - wpsite
+
+  phpmyadmin-test:
+    depends_on:
+      - db-mysql-test
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db-mysql-test
+      MYSQL_ROOT_PASSWORD: wordpress
+      UPLOAD_LIMIT: 512M
+    networks:
+      - wpsite
+
+  wordpress-test:
+    depends_on:
+      - db-mysql-test
+    image: wordpress:5.4.1
+    ports:
+      - "80:80"
+    restart: always
+    volumes: ["./htdocs/:/var/www/html"]
+    environment:
+      WORDPRESS_DB_HOST: db-mysql-test:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - wpsite
+
+networks:
+  wpsite:
+volumes:
+  db_data5:

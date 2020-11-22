@@ -1,0 +1,8 @@
+FROM mysql:5.7.24
+ENV MYSQL_PASSWORD="wordpress"
+ENV MYSQL_ROOT_PASSWORD="wordpress"
+ENV MYSQL_DATABASE="wordpress"
+ENV MYSQL_USER="wordpress"
+
+ADD wordpress.sql /docker-entrypoint-initdb.d
+EXPOSE 3306
